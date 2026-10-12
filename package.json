@@ -1,0 +1,21 @@
+{
+  "name": "civicconnect",
+  "version": "1.0.0",
+  "description": "CivicConnect is a controlled software engineering project focused on\r developing a digital platform for managing community service requests.",
+  "main": "index.js",
+  "directories": {
+    "doc": "docs"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "cors": "^2.8.6",
+    "dotenv": "^18.0.5",
+    "express": "^5.2.1",
+    "pg": "^8.23.1"
+  }
+}

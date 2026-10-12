@@ -60,3 +60,30 @@ The main branch represents the controlled project baseline.
 - Team Member 1 – Business, Scope & Stakeholders
 - Team Member 2 – Requirements, Traceability & Risk
 - Team Member 3 – Governance, Forward Planning & PED
+
+## Application & Technical Documentation (M2 Baseline)
+
+### Tech Stack
+
+- **Backend:** Node.js, Express.js
+- **Database:** PostgreSQL
+- **Frontend:** React.js (Planned for Sprint 2)
+
+### Prerequisites
+
+- Node.js v18+
+- PostgreSQL v14+
+
+### Environment Setup
+
+1. Clone the repository and navigate to the project directory.
+2. Run `npm install` to install dependencies.
+3. Create a `.env` file in the root directory for your local environment variables (e.g., `PORT`, database credentials). Do not commit this file to version control.
+
+### Run Instructions
+
+- Run `node server.js` to start the local development server.
+
+### Active Endpoints
+
+- `POST /api/v1/requests` - Accepts JSON payloads to submit a new community service request (Golden Trace).
