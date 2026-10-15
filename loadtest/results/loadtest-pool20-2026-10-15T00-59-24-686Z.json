@@ -1,0 +1,89 @@
+{
+  "env": {
+    "when": "2026-10-15T00:59:24.686Z",
+    "node": "v22.12.0",
+    "os": "win32 10.0.26300",
+    "cpu": "16 x AMD Ryzen 7 5700U with Radeon Graphics",
+    "ramGB": 6,
+    "dbPoolMax": 20,
+    "stageDurationSeconds": 15,
+    "endpoint": "POST /api/v1/requests",
+    "note": "Load generator, API and PostgreSQL ran on the SAME machine and compete for CPU."
+  },
+  "thresholds": {
+    "maxErrorRate": 0,
+    "p97_5Ms": 500,
+    "zeroLostWrites": true
+  },
+  "expectedPeak": 50,
+  "rows": [
+    {
+      "connections": 1,
+      "reqPerSec": 119,
+      "totalRequests": 1790,
+      "ok": 1790,
+      "failed": 0,
+      "errorRate": 0,
+      "p50": 8,
+      "p90": 10,
+      "p97_5": 12,
+      "p99": 13,
+      "max": 16,
+      "meanMs": 7.8,
+      "rowsSaved": 1791,
+      "gated": true,
+      "verdict": "PASS"
+    },
+    {
+      "connections": 10,
+      "reqPerSec": 278,
+      "totalRequests": 4164,
+      "ok": 4164,
+      "failed": 0,
+      "errorRate": 0,
+      "p50": 33,
+      "p90": 50,
+      "p97_5": 60,
+      "p99": 66,
+      "max": 123,
+      "meanMs": 35.6,
+      "rowsSaved": 4174,
+      "gated": true,
+      "verdict": "PASS"
+    },
+    {
+      "connections": 50,
+      "reqPerSec": 324,
+      "totalRequests": 4862,
+      "ok": 4862,
+      "failed": 0,
+      "errorRate": 0,
+      "p50": 150,
+      "p90": 183,
+      "p97_5": 208,
+      "p99": 235,
+      "max": 276,
+      "meanMs": 153.6,
+      "rowsSaved": 4876,
+      "gated": true,
+      "verdict": "PASS"
+    },
+    {
+      "connections": 100,
+      "reqPerSec": 324,
+      "totalRequests": 4866,
+      "ok": 4866,
+      "failed": 0,
+      "errorRate": 0,
+      "p50": 310,
+      "p90": 332,
+      "p97_5": 359,
+      "p99": 370,
+      "max": 379,
+      "meanMs": 306.4,
+      "rowsSaved": 4886,
+      "gated": false,
+      "verdict": "PASS"
+    }
+  ]
+}

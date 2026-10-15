@@ -1,4 +1,3 @@
-// src/domain/errors.js
 // A business/validation error that carries its HTTP meaning.
 // Lives in the Domain layer so every layer above can throw/handle it.
 class AppError extends Error {

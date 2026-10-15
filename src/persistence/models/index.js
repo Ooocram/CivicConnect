@@ -13,7 +13,13 @@ if (!url) {
   throw new Error(`Missing ${cfg.use_env_variable} environment variable (see .env.example).`);
 }
 
-const sequelize = new Sequelize(url, { dialect: cfg.dialect, logging: false });
+// DB_POOL_MAX is a tuning knob (default 5 = Sequelize's default). Task C load tests
+// showed the pool is the first bottleneck, so it must be adjustable without code changes.
+const sequelize = new Sequelize(url, {
+  dialect: cfg.dialect,
+  logging: false,
+  pool: { max: Number(process.env.DB_POOL_MAX) || 5 },
+});
 
 const User = sequelize.define('User', {
   name:  { type: DataTypes.STRING(120), allowNull: false },

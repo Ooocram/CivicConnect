@@ -1,21 +1,20 @@
-// src/application/request.service.js
 // APPLICATION LAYER: use cases + transaction boundaries ("Service-Layer ORM Transactions").
-const crypto = require('crypto');
-const { sequelize, Sequelize } = require('../persistence/models');
-const requestRepo = require('../persistence/request.repository');
-const commentRepo = require('../persistence/comment.repository');
-const events = require('./events');
-const { AppError } = require('../domain/errors');
+const crypto = require("crypto");
+const { sequelize, Sequelize } = require("../persistence/models");
+const requestRepo = require("../persistence/request.repository");
+const commentRepo = require("../persistence/comment.repository");
+const events = require("./events");
+const { AppError } = require("../domain/errors");
 const {
   parseRequestId,
   validateNewRequest,
   assertValidResolutionComment,
   assertResolvable,
-} = require('../domain/serviceRequest.rules');
+} = require("../domain/serviceRequest.rules");
 
 // ---- RSK-05 mitigation: retry on deadlock / serialisation failure -----------
 const MAX_ATTEMPTS = 3;
-const RETRYABLE = new Set(['40P01', '40001']); // deadlock_detected, serialization_failure
+const RETRYABLE = new Set(["40P01", "40001"]); // deadlock_detected, serialization_failure
 
 /** Re-runs the WHOLE transaction when Postgres aborts it. Business errors are never retried. */
 async function withRetry(fn) {
@@ -36,9 +35,9 @@ async function withRetry(fn) {
  */
 async function createRequest(body) {
   const data = validateNewRequest(body);
-  const trackingId = `REQ-${crypto.randomBytes(4).toString('hex').toUpperCase()}`;
+  const trackingId = `REQ-${crypto.randomBytes(4).toString("hex").toUpperCase()}`;
   return sequelize.transaction((t) =>
-    requestRepo.create({ ...data, trackingId, status: 'Open' }, t)
+    requestRepo.create({ ...data, trackingId, status: "Open" }, t),
   );
 }
 
@@ -59,29 +58,39 @@ async function resolveRequest({ requestId, staffUser, comment }) {
       { isolationLevel: Sequelize.Transaction.ISOLATION_LEVELS.READ_COMMITTED },
       async (t) => {
         const request = await requestRepo.findByIdForUpdate(id, t);
-        if (!request) throw new AppError(404, 'REQUEST_NOT_FOUND', 'Service request not found.');
+        if (!request)
+          throw new AppError(
+            404,
+            "REQUEST_NOT_FOUND",
+            "Service request not found.",
+          );
         assertResolvable(request);
 
-        const updated = await requestRepo.markResolved(request, staffUser.id, t);   // write 1
-        const savedComment = await commentRepo.createResolutionComment(             // write 2
+        const updated = await requestRepo.markResolved(
+          request,
+          staffUser.id,
+          t,
+        ); // write 1
+        const savedComment = await commentRepo.createResolutionComment(
+          // write 2
           { requestId: updated.id, authorId: staffUser.id, body: cleanComment },
-          t
+          t,
         );
         return { request: updated, comment: savedComment };
-      }
-    )
+      },
+    ),
   );
 
   // ADR-02: publish ONLY after commit, so nobody is told about a resolution that
   // later rolled back. A listener failure must not undo or fail the committed work.
   try {
-    events.emit('request.resolved', {
+    events.emit("request.resolved", {
       requestId: result.request.id,
       resolvedBy: staffUser.id,
       commentId: result.comment.id,
     });
   } catch (e) {
-    console.error('request.resolved listener failed:', e);
+    console.error("request.resolved listener failed:", e);
   }
 
   return result;
