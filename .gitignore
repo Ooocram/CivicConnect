@@ -1,0 +1,5 @@
+# RSK-06 control: secrets and dependencies must never be committed
+node_modules/
+.env
+.env.*
+!.env.example
