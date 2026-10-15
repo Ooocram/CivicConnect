@@ -1,32 +1,13 @@
-require("dotenv").config();
-const express = require("express");
-const app = express();
+// server.js  (repo root)
+// Bootstrap only: load env, fail fast on missing secrets, start listening.
+// All routing/logic now lives under src/ (layered architecture, PED v2.0 section 1.2).
+require('dotenv').config();
 
-app.use(express.json());
+if (!process.env.JWT_SECRET) {
+  throw new Error('JWT_SECRET is not set (see .env.example).');
+}
 
-//Service Request Submission Endpoint
-app.post("/api/v1/requests", async (req, res) => {
-  try {
-    const { title, description, categoryId, location } = req.body;
-
-    // Basic Validation matching the API decision
-    if (!title || !description) {
-      return res
-        .status(400)
-        .json({ error: "Title and description are required." });
-    }
-
-    // Placeholder for the ORM Transaction logic (to be fully implemented in Sprint 2)
-    const mockTrackingId = `REQ-${Math.floor(Math.random() * 10000)}`;
-
-    res.status(201).json({
-      message: "Service request submitted successfully",
-      trackingId: mockingTrackingId,
-    });
-  } catch (error) {
-    res.status(500).json({ error: "Internal Server Error" });
-  }
-});
+const app = require('./src/app');
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
