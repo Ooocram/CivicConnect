@@ -1,0 +1,48 @@
+name: M3 CI Quality Gates
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [main]
+permissions:
+  contents: read
+jobs:
+  quality:
+    name: Test, static checks and dependency audit
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_USER: civic
+          POSTGRES_PASSWORD: civic
+          POSTGRES_DB: civicconnect_test
+        ports: ['5432:5432']
+        options: >-
+          --health-cmd "pg_isready -U civic -d civicconnect_test"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+    env:
+      NODE_ENV: test
+      DATABASE_URL: postgres://civic:civic@localhost:5432/civicconnect
+      TEST_DATABASE_URL: postgres://civic:civic@localhost:5432/civicconnect_test
+      JWT_SECRET: ci-only-nonproduction-secret
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+      - name: Install locked dependencies
+        run: npm ci
+      - name: Static syntax checks
+        run: |
+          find src tests scripts loadtest migrations -type f -name '*.js' -print0 | xargs -0 -r -n1 node --check
+          node --check server.js
+          node --check jest.config.js
+      - name: Dependency vulnerability gate
+        run: npm audit --audit-level=high
+      - name: Run database migrations and Jest tests
+        run: npm test -- --runInBand --ci
