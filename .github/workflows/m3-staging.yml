@@ -1,0 +1,51 @@
+name: M3 Staging Validation
+on:
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  staging:
+    runs-on: ubuntu-latest
+    environment: staging
+    timeout-minutes: 15
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_USER: civic
+          POSTGRES_PASSWORD: civic
+          POSTGRES_DB: civicconnect_staging
+        ports: ['5432:5432']
+        options: >-
+          --health-cmd "pg_isready -U civic -d civicconnect_staging"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+    env:
+      NODE_ENV: staging
+      DATABASE_URL: postgres://civic:civic@localhost:5432/civicconnect_staging
+      JWT_SECRET: staging-ephemeral-not-for-production
+      PORT: '3000'
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+      - run: npm ci
+      - name: Migrate isolated staging database
+        run: npx sequelize-cli db:migrate --env staging
+      - name: Start release candidate and smoke test
+        run: |
+          node server.js > /tmp/civicconnect-staging.log 2>&1 &
+          pid=$!
+          trap 'kill "$pid" 2>/dev/null || true; cat /tmp/civicconnect-staging.log' EXIT
+          for i in $(seq 1 30); do
+            if curl --silent --output /dev/null http://127.0.0.1:3000/api/v1/requests; then
+              echo "HTTP server reachable in isolated staging environment"
+              exit 0
+            fi
+            sleep 1
+          done
+          echo "Staging server failed to become reachable"
+          exit 1
