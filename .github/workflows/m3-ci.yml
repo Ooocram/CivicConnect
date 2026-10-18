@@ -42,6 +42,8 @@ jobs:
           find src tests scripts loadtest migrations -type f -name '*.js' -print0 | xargs -0 -r -n1 node --check
           node --check server.js
           node --check jest.config.js
+      - name: Lint (ESLint)
+        run: npm run lint
       - name: Dependency vulnerability gate
         run: npm audit --audit-level=high
       - name: Run database migrations and Jest tests

@@ -2,7 +2,7 @@
 // Central error mapping. Anything unexpected becomes a generic 500 so internals never leak.
 const { AppError } = require('../domain/errors');
 
-module.exports = (err, req, res, next) => { // eslint-disable-line no-unused-vars
+module.exports = (err, req, res, next) => {
   if (err instanceof AppError) {
     return res.status(err.status).json({ error: { code: err.code, message: err.message } });
   }

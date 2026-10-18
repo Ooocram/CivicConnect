@@ -13,8 +13,9 @@ if (!url) {
   throw new Error(`Missing ${cfg.use_env_variable} environment variable (see .env.example).`);
 }
 
-// DB_POOL_MAX is a tuning knob (default 5 = Sequelize's default). Task C load tests
-// showed the pool is the first bottleneck, so it must be adjustable without code changes.
+// DB_POOL_MAX is a tuning knob (default 5 = Sequelize's default). The Task C load test compared
+// pool sizes 5 and 20 (3 runs each); the difference was within run-to-run variation, so the
+// default was kept. See docs/performance/load-test-report.md.
 const sequelize = new Sequelize(url, {
   dialect: cfg.dialect,
   logging: false,
