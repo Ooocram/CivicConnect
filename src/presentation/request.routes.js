@@ -2,9 +2,10 @@
 const router = require('express').Router();
 const controller = require('./request.controller');
 const { requireAuth, requireRole } = require('./auth.middleware');
+const { rateLimit } = require('./request.rate-limit');
 
 // FR-01 (Golden Trace). Public, as in M2.
-router.post('/', controller.create);
+router.post('/', rateLimit, controller.create);
 
 // FR-02: public tracking-token lookup with redacted responses.
 router.get('/track/:trackingId', controller.track);
