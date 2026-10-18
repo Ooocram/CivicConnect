@@ -58,3 +58,10 @@ The project progressed from an M2 submission defect to an independently tested l
 - Technical debt: separate final register and human sign-off remain to be completed.
 
 **Final submission actions:** reconcile original acceptance criteria, obtain independent approvals, confirm **ACTIVE** ruleset plus required CI check, run staging and attach evidence if feasible, approve continuing registers, freeze actual final merged commit/tag, export controlled PED v4.0 to PDF, and collect dated team release decision/signatures. **No signatures or executions are invented in this draft.**
+
+
+## M4 functional and security closure update (PR #11 — conditional)
+
+The proposed feature branch adds FR-02 tracking lookup/history, FR-03 staff filtering/self-assignment, FR-05 management status counts, a process-local POST rate limiter, CORS origin allowlist and functional staging smoke checks. These are **proposed changes pending green CI, review and merge**, not verified delivered functionality. The original M1 baseline contains seven criteria; [M1 reconciliation](../M4/M1-Scope-Reconciliation.md) proposes a conservative **3.5/7 = 50.0%** after successful PR acceptance, below the 80% target. FR-02 lacks requester-owned list, FR-03 lacks search/sort and UI, FR-05 lacks overdue SLA metric. See [technical debt](../M4/Technical-Debt-Register-Final.md), [risk/signoff](../M4/Release-Decision-and-Risk-Signoff.md) and [AI addendum](../M4/AI-Usage-Addendum.md).
+
+**Corrected staging history:** [Run 39161570217](https://github.com/Ooocram/CivicConnect/actions/runs/39161570217) succeeded using the **old reachability-only workflow**. The new POST+database smoke test must be run after merge; no new staging result is asserted.
