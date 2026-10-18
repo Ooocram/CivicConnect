@@ -61,8 +61,8 @@ Abuse of the public endpoint is possible only in the staging environment; the au
 ## 7. Facts to confirm before this is submitted
 
 - [x] Number of non-author approvals on PR #7 and on the PR that carries this file: PR #7 has 1 approval; current PR still pending.
-- [x] Result of the CI run on the latest `main` commit, and its test count: **Passed, 69 tests executed successfully.** https://github.com/Ooocram/CivicConnect/actions/runs/39109979166 .
-- [ ] Whether the staging workflow has been run on the release candidate: No.
+- [x] Result of the CI run on the latest `main` commit, and its test count: **Passed, 69 tests executed successfully.** [https://github.com/Ooocram/CivicConnect/actions/runs/39109979166] .
+- [x] Whether the staging workflow has been run on the release candidate:Yes. [https://github.com/Ooocram/CivicConnect/actions/runs/39161570217].
 - [x] Whether branch protection is confirmed on `main`: Yes, verified by Marco.
 
 Do not record an approval, a run or a protection rule that has not happened.
