@@ -41,6 +41,7 @@ const ServiceRequest = sequelize.define('ServiceRequest', {
   categoryId:  { type: DataTypes.INTEGER, allowNull: true },
   resolvedAt:  { type: DataTypes.DATE, allowNull: true },
   resolvedBy:  { type: DataTypes.INTEGER, allowNull: true },
+  assignedTo: { type: DataTypes.INTEGER, allowNull: true },
 });
 
 const Comment = sequelize.define('Comment', {
@@ -52,6 +53,7 @@ const Comment = sequelize.define('Comment', {
 
 ServiceRequest.belongsTo(Category, { foreignKey: 'categoryId' });
 ServiceRequest.belongsTo(User, { as: 'resolver', foreignKey: 'resolvedBy' });
+ServiceRequest.belongsTo(User, { as: 'assignee', foreignKey: 'assignedTo' });
 ServiceRequest.hasMany(Comment, { foreignKey: 'requestId' });
 Comment.belongsTo(ServiceRequest, { foreignKey: 'requestId' });
 Comment.belongsTo(User, { as: 'author', foreignKey: 'authorId' });
