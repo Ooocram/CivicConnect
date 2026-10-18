@@ -1,12 +1,16 @@
-# Defect Register — Milestone 3 QA (working draft)
+# Defect Register — M3/M4 Closure
 
-No new defect is declared as confirmed by this QA contribution alone. The latest project archive contains domain validation and integration tests, so findings from an older project snapshot must not be copied into this register without retesting.
+**Verified code:** `3b86b25aec7ad423f3ddb155c2d5ec9087210240`. **CI:** [69/69 passing](https://github.com/Ooocram/CivicConnect/actions/runs/39158865119).
 
-| ID | Description | Severity | Status | Evidence / next action |
-|---|---|---|---|---|
-| QA-OBS-01 | Functional behavior and current defects still need confirmation against the latest integrated release candidate. | Unclassified observation (not a confirmed defect) | Open — investigate | Run the complete test suite and review failures; if a reproducible failure is found, record steps, expected/actual results, commit SHA, and a fix reference. |
-| DEF-M3-01 | `POST /api/v1/requests` returned HTTP 500 for every valid request in the M2 baseline. Root cause: a variable-name typo in `server.js`; `mockTrackingId` was declared but `mockingTrackingId` was returned, so a ReferenceError was thrown and the generic catch turned it into a 500. PED v2.0 recorded the endpoint as implemented. | High (core FR-01 journey unusable, no workaround) | Fixed and verified | Introduced in `4e8308a` (M2, PR #1). Steps: start the server at that commit and POST `{"title":"Pothole","description":"Deep one on Main St"}` to `/api/v1/requests`. Expected: 201 with a Tracking ID. Actual: 500 `{"error":"Internal Server Error"}` (the missing-title case correctly returned 400). Fix: `1db839a` (merged by PR #2) replaced the placeholder with the layered implementation. Verification: `tests/integration/fr01-create-request.test.js`, test 'creates a request, returns 201 and a Tracking ID, and persists it as Open'; run in the CI quality gate [CI run link: fill on merge]. Contributing cause: M2 had no automated happy-path test (the npm test script was a placeholder). |
+| ID | Finding | Status | Evidence |
+|---|---|---|---|
+| DEF-M3-01 | M2 POST valid request returned 500 due to misspelt tracking-ID variable | Fixed and reverified | PR #2; `tests/integration/fr01-create-request.test.js`; final CI |
+| QA-OBS-01 | Earlier QA snapshot required integrated verification | Closed as observation | Current 69-test suite passed; no claim that all defects are absent |
+| QA-LIM-01 | FR-02, FR-03 and FR-05 missing | Open scope gap | No implemented endpoints |
+| QA-LIM-02 | No frontend/full-stack E2E | Open | `tests/e2e/critical-journeys.test.js` covers API + DB only |
+| QA-LIM-03 | No staff login/token lifecycle; dev script only | Open | `scripts/dev-seed-and-token.js` |
+| QA-LIM-04 | No public POST rate limit; unrestricted CORS | Open | Routes, app configuration and load report |
+| QA-LIM-05 | Staging run and persistent deployment not evidenced | Open | Workflow exists but no run verified |
+| GOV-M4-01 | Main ruleset activation scheduled before submission | **Planned ACTIVE — pending verification** | [Ruleset #25349686](https://github.com/Ooocram/CivicConnect/rules/25349686) was disabled with empty required checks on 18 Oct inspection. Two approvals parameter exists; activation and required CI gate must be confirmed. |
 
-DEF-M3-01 was found during the backend implementation review and reproduced at commit `4e8308a`; it was not found by the QA suite. It is recorded here so the register is consistent with the M2 baseline evidence in PED v2.0.
-
-Replace or close this observation after testing. Do not report it as a product bug unless a reproducible failure is found.
+**No fictitious closure:** Do not change GOV-M4-01 to “verified active” until GitHub reports active enforcement. Missing original scope is a delivery gap, not a defect proved by the 69 passing tests. Final sign-off remains with the team.
