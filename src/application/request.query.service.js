@@ -1,6 +1,5 @@
 // M4 scope closure: read, triage and management reporting.
 // Public tracking lookup returns a minimal projection; staff-only views require JWT.
-const { Op } = require('sequelize');
 const { ServiceRequest, Category, Comment } = require('../persistence/models');
 const { AppError } = require('../domain/errors');
 
