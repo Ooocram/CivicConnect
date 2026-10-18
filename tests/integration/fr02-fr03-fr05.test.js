@@ -40,7 +40,9 @@ describe('M4 missing-scope backend closure', () => {
   test('FR-05 management summary reports exact status counts', async () => {
     const staff = await createStaff();
     await createOpenRequest();
-    await createOpenRequest({ status: 'Resolved' });
+    const resolvedItem = await createOpenRequest();
+    const resolvedResponse = await request(app).put('/api/v1/requests/' + resolvedItem.id + '/resolve').set('Authorization', 'Bearer ' + tokenFor(staff)).send({ comment: 'Completed during integration test' });
+    expect(resolvedResponse.status).toBe(200);
     const result = await request(app).get('/api/v1/requests/management/summary').set('Authorization', 'Bearer ' + tokenFor(staff));
     expect(result.status).toBe(200);
     expect(result.body.data.open).toBe(1);
