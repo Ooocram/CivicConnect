@@ -26,6 +26,7 @@ jobs:
       DATABASE_URL: postgres://civic:civic@localhost:5432/civicconnect_staging
       JWT_SECRET: staging-ephemeral-not-for-production
       PORT: '3000'
+      CORS_ALLOWED_ORIGINS: 'http://localhost:3000'
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -43,9 +44,18 @@ jobs:
           for i in $(seq 1 30); do
             if curl --silent --output /dev/null http://127.0.0.1:3000/api/v1/requests; then
               echo "HTTP server reachable in isolated staging environment"
-              exit 0
+              break
             fi
             sleep 1
           done
-          echo "Staging server failed to become reachable"
-          exit 1
+          # Functional FR-01 smoke test: HTTP 201, valid tracking ID, and DB persistence.
+          response=$(curl --silent --show-error --fail-with-body --write-out '\n%{http_code}' \
+            -H 'Content-Type: application/json' \
+            -d '{"title":"Staging smoke request","description":"Release candidate functional verification"}' \
+            http://127.0.0.1:3000/api/v1/requests)
+          status=$(printf '%s\n' "$response" | tail -n 1)
+          body=$(printf '%s\n' "$response" | sed '$d')
+          test "$status" = 201
+          tracking=$(printf '%s' "$body" | node -e "let s='';process.stdin.on('data',d=>s+=d).on('end',()=>{let t=JSON.parse(s).trackingId;if(!/^REQ-[0-9A-F]{8}$/.test(t))process.exit(1);console.log(t)})")
+          TRACKING="$tracking" node -e "const {ServiceRequest,sequelize}=require('./src/persistence/models');(async()=>{const row=await ServiceRequest.findOne({where:{trackingId:process.env.TRACKING}});if(!row||row.status!=='Open')process.exitCode=1;await sequelize.close()})().catch(e=>{console.error(e);process.exit(1)})"
+          echo "FR-01 staging smoke passed: HTTP 201, tracking ID, persisted Open request"
