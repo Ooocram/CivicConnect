@@ -33,4 +33,13 @@ async function resolve(req, res, next) {
   }
 }
 
-module.exports = { create, resolve };
+const queryService = require('../application/request.query.service');
+const handler = fn => async (req, res, next) => {
+  try { res.status(200).json({ data: await fn(req) }); } catch (err) { next(err); }
+};
+const track = handler(req => queryService.byTrackingId(req.params.trackingId));
+const history = handler(req => queryService.history(req.params.trackingId));
+const list = handler(req => queryService.listForStaff(req.query));
+const assign = handler(req => queryService.assign({ requestId: req.params.id, staffUser: req.user }));
+const summary = handler(() => queryService.summary());
+module.exports = { create, resolve, track, history, list, assign, summary };
