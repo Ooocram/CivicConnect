@@ -1,6 +1,6 @@
 const request = require('supertest');
 const app = require('../../src/app');
-const { sequelize, ServiceRequest, resetDb, createStaff, createRequester, createCategory, createOpenRequest, tokenFor } = require('../helpers/db');
+const { sequelize, resetDb, createStaff, createRequester, createCategory, createOpenRequest, tokenFor } = require('../helpers/db');
 beforeEach(resetDb);
 afterAll(() => sequelize.close());
 
